@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,20 +13,14 @@ namespace chapter1
 {
     public partial class Form1 : Form
     {
+        private static readonly List<string> ImageFormats = new List<string>() { "*.bmp", "*.gif", "*.png" };
+
+
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void textBox1_KeyDown(object sender, KeyEventArgs e)
-        {
-            // Enterキー
-            if (e.KeyCode == Keys.Return)
-            {
-                // ツリービューを開く
-                ivTreeView1.SelectDirectory(textBox1.Text);
-            }
-        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -35,12 +30,20 @@ namespace chapter1
                 // 入力ファイル名を取得
                 string path = openFileDialog1.FileName;
 
-                // テキストボックスに表示
-                textBox1.Text = path;
-
                 // ツリービューに反映
                 ivTreeView1.SelectDirectory(path);
+                // リストビューに反映
+                ivListView1.ShowList(ivTreeView1.SelectedNode.FullPath + Path.DirectorySeparatorChar, ImageFormats.ToArray());
+
             }
+        }
+        /// <summary>
+        /// ツリービューの値が変更されたイベント
+        /// </summary>
+        private void ivTreeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            // リストビューに反映
+            ivListView1.ShowList(ivTreeView1.SelectedNode.FullPath + Path.DirectorySeparatorChar, ImageFormats.ToArray());
         }
     }
 }
